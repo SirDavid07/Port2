@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#070b10">
+  <title>Admin | Neural OS</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <script src="/admin/admin.js" defer></script>
+</head>
+<body>
+  <main class="login" id="login-view" hidden>
+    <form class="card" id="login" autocomplete="on" novalidate>
+      <p class="mono accent">NEURAL_OS // ADMIN</p>
+      <h1>Sign in</h1>
+      <div class="field">
+        <label for="l-user">Username</label>
+        <input id="l-user" name="username" type="text" autocomplete="username" maxlength="64" required>
+      </div>
+      <div class="field">
+        <label for="l-pass">Password</label>
+        <input id="l-pass" name="password" type="password" autocomplete="current-password" maxlength="200" required>
+      </div>
+      <p class="err" id="login-err" role="alert"></p>
+      <button class="btn solid" type="submit" id="login-btn">Sign in</button>
+    </form>
+  </main>
+
+  <div id="app-view" hidden>
+    <header class="bar">
+      <div>
+        <p class="mono accent">NEURAL_OS // ADMIN</p>
+        <p class="muted small">Signed in as <strong id="who"></strong></p>
+      </div>
+      <button class="btn" type="button" id="logout">Sign out</button>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" type="button" data-tab="projects" aria-selected="true">Projects</button>
+      <button role="tab" type="button" data-tab="messages" aria-selected="false">Messages <span class="pill" id="unread" hidden></span></button>
+      <button role="tab" type="button" data-tab="profile" aria-selected="false">Profile</button>
+      <button role="tab" type="button" data-tab="security" aria-selected="false">Security</button>
+    </nav>
+
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+
+    <main class="content">
+      <section id="tab-projects" role="tabpanel" class="split">
+        <div>
+          <div class="row-head">
+            <h2>All projects</h2>
+            <button class="btn small" type="button" id="new-project">New project</button>
+          </div>
+          <ul class="list" id="project-list"></ul>
+        </div>
+        <form class="card" id="project-form" novalidate>
+          <h2 id="project-form-title">New project</h2>
+          <div class="field"><label for="p-title">Title</label><input id="p-title" name="title" maxlength="80" required><p class="err" data-err="title"></p></div>
+          <div class="two">
+            <div class="field"><label for="p-category">Section</label>
+              <select id="p-category" name="category"><option value="work">Works</option><option value="lab">Labs</option></select></div>
+            <div class="field"><label for="p-accent">Accent</label>
+              <select id="p-accent" name="accent"><option value="teal">Teal</option><option value="violet">Violet</option><option value="pink">Pink</option></select></div>
+          </div>
+          <div class="field"><label for="p-summary">Summary</label><input id="p-summary" name="summary" maxlength="240" required><p class="err" data-err="summary"></p></div>
+          <div class="field"><label for="p-description">Case study text</label><textarea id="p-description" name="description" rows="7" maxlength="4000"></textarea><p class="hint">Blank line = new paragraph. Plain text only.</p><p class="err" data-err="description"></p></div>
+          <div class="field"><label for="p-tags">Tags</label><input id="p-tags" name="tags" placeholder="React, WebGL, UX"><p class="hint">Comma separated, up to 8.</p><p class="err" data-err="tags"></p></div>
+          <div class="field"><label for="p-link">Link (https only)</label><input id="p-link" name="link_url" type="url" placeholder="https://example.com" maxlength="500"><p class="err" data-err="link_url"></p></div>
+          <div class="two">
+            <div class="field"><label for="p-position">Order</label><input id="p-position" name="position" type="number" min="0" max="9999" value="0"><p class="err" data-err="position"></p></div>
+            <label class="check"><input type="checkbox" name="published" checked> Published</label>
+          </div>
+          <div class="actions">
+            <button class="btn solid" type="submit" id="project-save">Save project</button>
+            <button class="btn danger" type="button" id="project-delete" hidden>Delete</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="tab-messages" role="tabpanel" hidden>
+        <div class="row-head"><h2>Inbox</h2><button class="btn small" type="button" id="refresh-messages">Refresh</button></div>
+        <ul class="list msgs" id="message-list"></ul>
+      </section>
+
+      <section id="tab-profile" role="tabpanel" hidden>
+        <form class="card narrow" id="profile-form" novalidate>
+          <h2>Public profile</h2>
+          <div class="field"><label for="pr-name">Name</label><input id="pr-name" name="name" maxlength="60" required><p class="err" data-err="name"></p></div>
+          <div class="field"><label for="pr-role">Role</label><input id="pr-role" name="role" maxlength="80"><p class="err" data-err="role"></p></div>
+          <div class="field"><label for="pr-headline">Headline</label><input id="pr-headline" name="headline" maxlength="80"><p class="err" data-err="headline"></p></div>
+          <div class="field"><label for="pr-bio">Bio</label><textarea id="pr-bio" name="bio" rows="4" maxlength="600"></textarea><p class="err" data-err="bio"></p></div>
+          <div class="field"><label for="pr-location">Location</label><input id="pr-location" name="location" maxlength="60"><p class="err" data-err="location"></p></div>
+          <div class="field"><label for="pr-skills">System stats</label><textarea id="pr-skills" name="skills" rows="4" placeholder="React: 98% load&#10;UI/UX engine: Active"></textarea><p class="hint">One per line as "Label: value". A value like "98% load" draws a bar.</p><p class="err" data-err="skills"></p></div>
+          <label class="check"><input type="checkbox" name="available"> Show "Available for hire"</label>
+          <div class="actions"><button class="btn solid" type="submit">Save profile</button></div>
+        </form>
+      </section>
+
+      <section id="tab-security" role="tabpanel" hidden>
+        <div class="split">
+          <form class="card" id="password-form" novalidate autocomplete="off">
+            <h2>Change password</h2>
+            <div class="field"><label for="pw-current">Current password</label><input id="pw-current" name="current" type="password" autocomplete="current-password" maxlength="200" required><p class="err" data-err="current"></p></div>
+            <div class="field"><label for="pw-next">New password</label><input id="pw-next" name="next" type="password" autocomplete="new-password" maxlength="200" required><p class="hint">12+ characters. Changing it signs out every other device.</p><p class="err" data-err="next"></p></div>
+            <div class="actions"><button class="btn solid" type="submit">Update password</button></div>
+          </form>
+          <div>
+            <div class="row-head"><h2>Recent activity</h2><button class="btn small" type="button" id="refresh-audit">Refresh</button></div>
+            <ul class="list audit" id="audit-list"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
